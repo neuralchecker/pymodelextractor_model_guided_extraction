@@ -1,5 +1,5 @@
 # A Congruence-based Approach to Active Automata Learning from Neural Language Models
- Repository for the experiments performed for the paper "A Congruence-based Approach to Active Automata Learning from Neural Language Models"
+ Repository for the experiments performed for the paper "A Congruence-based Approach to Active Automata Learning from Neural Language Models" ICGI 2023
 
 Library Versions Used:
 <br>pythautomata==0.35.3
