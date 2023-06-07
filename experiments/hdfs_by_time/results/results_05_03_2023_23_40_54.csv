@@ -1,0 +1,11 @@
+,Unnamed: 0,Algorithm,Instance,Number of Extracted States,RunNumber,Time (s),LastTokenQuery,EquivalenceQuery,NumberOfStatesExceeded,QueryLengthExceeded,TimeExceeded,Tree Depth,Inner Nodes,TimeBound,Accuracy,Unknown Results Percentage
+4,4,BoundedQuant_quant3,,145,0,546.8824202027172,5820,50,False,False,True,8,25,540,0.535,0.0
+5,5,BoundedQuant_quant3,,210,0,1201.630992068909,10230,86,False,False,True,10,49,1200,0.686,0.0
+6,6,BoundedQuant_quant3,,281,0,2003.2297711386343,14340,118,False,False,True,10,67,2000,0.87,0.0
+7,7,BoundedQuant_quant3,,364,0,3005.0596737777814,18780,152,False,False,True,11,81,3000,0.92,0.0
+8,8,BoundedQuant_quant3,,470,0,5023.397154216189,26670,205,False,False,True,11,107,5000,0.945,0.0
+9,9,BoundedQuant_quant3,,507,0,6013.496268032119,29250,226,False,False,True,11,117,6000,0.95,0.0
+10,10,BoundedQuant_quant3,,555,0,7013.313731309958,31590,250,False,False,True,12,121,7000,0.942,0.0
+11,11,BoundedQuant_quant3,,605,0,8033.171180352103,34650,280,False,False,True,12,135,8000,0.962,0.0
+12,12,BoundedQuant_quant3,,665,0,10018.791075218936,40050,322,False,False,True,12,149,10000,0.985,0.0
+13,13,BoundedQuant_quant3,,714,0,12042.23436874291,43740,353,False,False,True,12,159,12000,0.989,0.0

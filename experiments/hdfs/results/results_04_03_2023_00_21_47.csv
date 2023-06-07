@@ -1,0 +1,8 @@
+,Algorithm,Instance,Number of Extracted States,RunNumber,Time (s),LastTokenQuery,EquivalenceQuery,NumberOfStatesExceeded,QueryLengthExceeded,TimeExceeded,Tree Depth,Inner Nodes,TimeBound,Accuracy,Unknown Results Percentage
+0,BoundedQuant_top6,,2087,0,10012.339887937997,3390,87,False,False,True,7,40,10000,0.344,0.0
+1,BoundedQuant_rank6,,8837,0,18733.871662599035,960,1,False,False,True,1,1,10000,0.0,0.906
+2,BoundedQuant_quant10,,7289,0,11714.371481494978,960,1,False,False,True,1,1,10000,0.3812877263581489,0.006
+3,BoundedQuant_rank3,,2008,0,10012.904841287993,3900,105,False,False,True,5,43,10000,0.6073245167853509,0.017
+4,BoundedQuant_quant5,,3014,0,10009.880874235185,2280,78,False,False,True,5,20,10000,0.1959798994974874,0.005
+5,BoundedQuant_top3,,1616,0,10015.758221874945,6750,153,False,False,True,8,56,10000,0.774,0.0
+6,BoundedQuant_quant3,,660,0,10020.584198086057,33840,326,False,False,True,13,148,10000,0.969,0.0

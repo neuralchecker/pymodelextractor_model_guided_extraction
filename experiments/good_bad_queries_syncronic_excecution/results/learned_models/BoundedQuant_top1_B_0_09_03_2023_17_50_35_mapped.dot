@@ -1,0 +1,17 @@
+digraph weighted_automaton {
+	margin=0 rankdir=LR size=15
+	node [shape=circle]
+	"51,55,33,38" [label="51,55,33,38
+[51]"]
+	"51,55,33,38" -> "ϵ" [label="[(1, 37), (39, 40), (42, 53), (55, 71), (74, 85), (87, 87), (89, 122), (124, 255)]"]
+	"51,55,33,38" -> "51,55,33,38" [label="[(38, 38), (54, 54), (123, 123)]"]
+	"51,55,33,38" -> UNKNOWN [label="[(41, 41), (72, 73), (86, 86), (88, 88)]"]
+	UNKNOWN [label="UNKNOWN
+UNKNOWN"]
+	UNKNOWN -> UNKNOWN [label="[(1, 255)]"]
+	"ϵ" [label="ϵ
+BOT/TOP" shape=diamond]
+	"ϵ" -> "ϵ" [label="[(1, 37), (39, 120), (122, 255)]"]
+	"ϵ" -> UNKNOWN [label=121]
+	"ϵ" -> "51,55,33,38" [label=38]
+}
