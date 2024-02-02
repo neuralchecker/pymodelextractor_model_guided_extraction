@@ -13,6 +13,9 @@ class DataSequenceGenerator(SequenceGenerator):
     def __init__(self, data , alphabet, max_seq_length: int, random_seed: int = 21, min_seq_length: int = 0):        
         super().__init__(alphabet, max_seq_length, random_seed, min_seq_length)
         self.data = data
+    
+    def generate_single_word(self, length):
+        raise NotImplementedError
 
     def generate_word(self, length):
         if length > self._max_seq_length:
