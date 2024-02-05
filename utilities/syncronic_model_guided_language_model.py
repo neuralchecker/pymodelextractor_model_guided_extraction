@@ -7,9 +7,6 @@ from pythautomata.base_types.alphabet import Alphabet
 from pythautomata.utilities.uniform_length_sequence_generator import UniformLengthSequenceGenerator
 from pythautomata.utilities.probability_partitioner import ProbabilityPartitioner
 
-from case_studies.good_bad_queries.utils import load_model
-from case_studies.good_bad_queries.transformers import get_custom_objects
-
 class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
 
     def __init__(self, model1:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, compose_by_difference = False):
@@ -29,7 +26,7 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         assert model1.terminal_symbol == guiding_model.terminal_symbol
 
         self._alphabet = model1.alphabet
-        self._padding_symbol = model1._padding_symbol
+        #self._padding_symbol = model1._padding_symbol
         self._terminal_symbol = model1.terminal_symbol
         #self._compose_by_difference = compose_by_difference
         #self._partitioner = probability_partitioner
