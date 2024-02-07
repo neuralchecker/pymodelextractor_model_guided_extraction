@@ -19,8 +19,7 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
     
     @property
     def terminal_symbol(self) -> Symbol:
-        print(self.tokenizer.sep_token)
-        return SymbolStr(self.tokenizer.eos_token)
+        return SymbolStr(self.tokenizer.sep_token)
     
     @property
     def alphabet(self) -> Alphabet:
