@@ -20,17 +20,17 @@ def get_man_woman_wfa(terminal_symbol):
     stateB = WeightedState("B", 0,0, terminal_symbol)
     stateA.add_transition(SymbolStr("The"), stateB, 1)
     stateC = WeightedState("C", 0,0, terminal_symbol)
-    stateB.add_transition(SymbolStr("man"), stateC , 0.5)
-    stateB.add_transition(SymbolStr("woman"), stateC, 0.5)
+    stateB.add_transition(SymbolStr("man"), stateC , 1)
+    stateB.add_transition(SymbolStr("woman"), stateC, 1)
     stateD = WeightedState("D", 0,0, terminal_symbol)
     stateC.add_transition(SymbolStr("studied"), stateD, 1)
     stateE = WeightedState("E", 0,1, terminal_symbol)
-    stateD.add_transition(SymbolStr("medicine"), stateE, 1/6)
-    stateD.add_transition(SymbolStr("science"), stateE, 1/6)
-    stateD.add_transition(SymbolStr("engineering"), stateE, 1/6)
-    stateD.add_transition(SymbolStr("maths"), stateE, 1/6)
-    stateD.add_transition(SymbolStr("art"), stateE, 1/6)
-    stateD.add_transition(SymbolStr("music"), stateE, 1/6)
+    stateD.add_transition(SymbolStr("medicine"), stateE, 1)
+    stateD.add_transition(SymbolStr("science"), stateE, 1)
+    stateD.add_transition(SymbolStr("engineering"), stateE, 1)
+    stateD.add_transition(SymbolStr("maths"), stateE, 1)
+    stateD.add_transition(SymbolStr("art"), stateE, 1)
+    stateD.add_transition(SymbolStr("music"), stateE, 1)
     
     hole = WeightedState("hole", 0, 0, terminal_symbol)
     
@@ -41,7 +41,7 @@ def get_man_woman_wfa(terminal_symbol):
         total_weights = sum(weights)
         for symbol in alphabet.symbols:
             if symbol not in state.transitions_set:
-                state.add_transition(symbol, hole, (1-total_weights)/(len(alphabet.symbols)-len(state.transitions_set)))
+                state.add_transition(symbol, hole, 0)
 
 
     comparator = None
