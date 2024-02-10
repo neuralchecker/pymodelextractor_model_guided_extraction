@@ -66,8 +66,8 @@ comparator = WFAPartitionComparator(partitioner)
 epsilon = 0.1
 delta = epsilon
 sequence_generator = generator
-max_states = 10
-max_query_length = 10
+max_states = 100
+max_query_length = 100
 
 
 # %%

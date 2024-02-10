@@ -24,17 +24,19 @@ def get_man_woman_wfa(terminal_symbol):
     stateB.add_transition(SymbolStr("woman"), stateC, 1)
     stateD = WeightedState("D", 0,0, terminal_symbol)
     stateC.add_transition(SymbolStr("studied"), stateD, 1)
-    stateE = WeightedState("E", 0,1, terminal_symbol)
-    stateD.add_transition(SymbolStr("medicine"), stateE, 1)
-    stateD.add_transition(SymbolStr("science"), stateE, 1)
-    stateD.add_transition(SymbolStr("engineering"), stateE, 1)
-    stateD.add_transition(SymbolStr("maths"), stateE, 1)
-    stateD.add_transition(SymbolStr("art"), stateE, 1)
-    stateD.add_transition(SymbolStr("music"), stateE, 1)
+    #stateE = WeightedState("E", 0,1, terminal_symbol)
+    hole = WeightedState("hole", 0, 1, terminal_symbol)
+    stateD.add_transition(SymbolStr("medicine"), hole,1)#stateE, 1)
+    stateD.add_transition(SymbolStr("science"), hole,1)#stateE, 1)
+    stateD.add_transition(SymbolStr("engineering"), hole,1)#stateE, 1)
+    stateD.add_transition(SymbolStr("maths"), hole,1)#stateE, 1)
+    stateD.add_transition(SymbolStr("art"), hole,1)#stateE, 1)
+    stateD.add_transition(SymbolStr("music"), hole,1)#stateE, 1)
     
-    hole = WeightedState("hole", 0, 0, terminal_symbol)
     
-    states = frozenset({stateA, stateB, stateC, stateD, stateE, hole})
+    
+    #states = frozenset({stateA, stateB, stateC, stateD, stateE, hole})
+    states = frozenset({stateA, stateB, stateC, stateD, hole})
 
     for state in states:
         _, weights, _ = state.get_all_symbol_weights()
