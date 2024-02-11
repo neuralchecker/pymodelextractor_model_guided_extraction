@@ -65,22 +65,28 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         return self._model._get_symbol_index(symbol)
     
     def get_last_token_weights_batch(self, sequences, required_suffixes):
-        sequences = sorted(list(sequences))            
-        guiding_results = self._guiding_model.get_last_token_weights_batch(sequences, required_suffixes)
-        seqs_for_model = list()
-        for i,res in enumerate(guiding_results):
-            if np.sum(res) != 0:
-                seqs_for_model.append(sequences[i])
-        model_results = self._model.get_last_token_weights_batch(seqs_for_model, required_suffixes)  
         final_results = []
-        model_results_i = 0
-        for res in guiding_results:
-            if np.sum(res) != 0:
-                final_results.append(self._compose_probas(res, model_results[model_results_i]))
-                model_results_i+=1
-            else:
-                final_results.append(res)
+        for sequence in sequences:
+            final_results.append(self.get_last_token_weights(sequence, required_suffixes))
         return final_results
+
+    # def get_last_token_weights_batch(self, sequences, required_suffixes):
+    #     sequences = sorted(list(sequences))            
+    #     guiding_results = self._guiding_model.get_last_token_weights_batch(sequences, required_suffixes)
+    #     seqs_for_model = list()
+    #     for i,res in enumerate(guiding_results):
+    #         #if np.sum(res) != 0:
+    #         seqs_for_model.append(sequences[i])
+    #     model_results = self._model.get_last_token_weights_batch(seqs_for_model, required_suffixes)  
+    #     final_results = []
+    #     model_results_i = 0
+    #     for res in guiding_results:
+    #         #if np.sum(res) != 0:
+    #         final_results.append(self._compose_probas(res, model_results[model_results_i]))
+    #         model_results_i+=1
+    #         #else:
+    #         #    final_results.append(res)
+    #     return final_results
 
     def _compose_probas(self, probability_vector1, probability_vector2):
         result = np.array(probability_vector1)*np.array(probability_vector2)
@@ -99,8 +105,8 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
     
     def get_last_token_weights(self, sequence, required_suffixes):
         guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
-        if np.sum(guiding_results) == 0:
-            return guiding_results
+        #if np.sum(guiding_results) == 0:
+        #    return guiding_results
         
         model_results = self._model.get_last_token_weights(sequence, required_suffixes)
         
