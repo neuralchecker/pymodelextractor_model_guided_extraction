@@ -9,7 +9,7 @@ from pythautomata.utilities.probability_partitioner import ProbabilityPartitione
 
 class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
 
-    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, compose_by_difference = False):
+    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, normalize_outputs = False):
         super().__init__()
         if model_name is None:
             self._model_name = model.name+"_"+guiding_model.name
@@ -19,6 +19,7 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
             self._max_seq_length = min(model._max_seq_length, guiding_model._max_seq_length)
         self._model = model
         self._guiding_model = guiding_model
+        self._normalize_outputs = normalize_outputs
         self.query_cache = dict()
         #TODO: Change to model1.alphabet in guiding_model.alphabet
         assert model.alphabet == guiding_model.alphabet
@@ -89,8 +90,9 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
     #     return final_results
 
     def _compose_probas(self, probability_vector1, probability_vector2):
-        result = np.array(probability_vector1)*np.array(probability_vector2)
-        assert len(result) ==len(probability_vector1)
+        assert len(probability_vector1) ==len(probability_vector2) 
+        result = np.array(probability_vector1)*np.array(probability_vector2)  
+        assert len(result) ==len(probability_vector1)      
         return result
         # exception_vector = np.ones(len(probability_vector1))*-2
         # if self._compose_by_difference:
@@ -104,14 +106,30 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         
     
     def get_last_token_weights(self, sequence, required_suffixes):
+        assert len(required_suffixes)==len(self.alphabet)+1, 'required_suffixes should only be the alphabet'
+        
         guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
-        #if np.sum(guiding_results) == 0:
-        #    return guiding_results
-        
+        required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
         model_results = self._model.get_last_token_weights(sequence, required_suffixes)
-        
-        return self._compose_probas(model_results, guiding_results)
+        model_results_full = []
+        j=0
+        for i in range(len(guiding_results)):
+            if guiding_results[i]>0:
+                model_results_full.append(model_results[j])
+                j+=1
+            else:
+                model_results_full.append(guiding_results[i])
+        final_probas = self._compose_probas(model_results_full, guiding_results)
+        if self._normalize_outputs:
+            final_probas = self.normalize(final_probas)
+        return final_probas
     
+    def normalize(self, probas):
+        if np.sum(probas)> 0:
+            return list(np.array(probas)/np.sum(probas))
+        else:
+            return probas
+
     def last_token_probabilities_batch(self, sequences: list[Sequence], required_suffixes: list[Sequence]) -> \
             list[list[float]]:
         return self.get_last_token_weights_batch(sequences, required_suffixes)

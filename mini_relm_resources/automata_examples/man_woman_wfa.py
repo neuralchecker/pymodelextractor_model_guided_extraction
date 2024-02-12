@@ -12,7 +12,8 @@ from pythautomata.automata.wheighted_automaton_definition.probabilistic_determin
 
 alphabet = Alphabet(frozenset((SymbolStr("The"), SymbolStr("man"), SymbolStr("woman"), SymbolStr("studied"), 
                                SymbolStr("medicine"), SymbolStr("science"), SymbolStr("engineering"), 
-                               SymbolStr("maths"), SymbolStr("art"), SymbolStr("music"))))
+                               SymbolStr("maths"), SymbolStr("art"), SymbolStr("music"), SymbolStr("astrophysics"),
+                               SymbolStr("astrology"))))
 
 # This automaton represents the following regex: "The (man|woman) studied (medicine|science|engineering|maths|art|music)"
 def get_man_woman_wfa(terminal_symbol):
@@ -31,7 +32,9 @@ def get_man_woman_wfa(terminal_symbol):
     stateD.add_transition(SymbolStr("maths"), stateE, 1)
     stateD.add_transition(SymbolStr("art"), stateE, 1)
     stateD.add_transition(SymbolStr("music"), stateE, 1)
-    
+    stateD.add_transition(SymbolStr("astrophysics"), stateE, 1)
+    stateD.add_transition(SymbolStr("astrology"), stateE, 1)
+
     hole = WeightedState("hole", 0, 0, terminal_symbol)
     
     states = frozenset({stateA, stateB, stateC, stateD, stateE, hole})
