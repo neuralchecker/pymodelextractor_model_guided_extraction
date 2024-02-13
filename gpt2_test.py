@@ -53,7 +53,7 @@ display(graph)
 from utilities.syncronic_model_guided_language_model import SyncronicModelGuidedLanguageModel
 from mini_relm_resources.automata_examples.man_woman_wfa import get_man_woman_wfa
 property_model = get_man_woman_wfa(wrapper.terminal_symbol)
-syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10, normalize_outputs=True)
+syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10, normalize_outputs=False)
 
 # %%
 from pymodelextractor.teachers.pac_probabilistic_teacher import PACProbabilisticTeacher

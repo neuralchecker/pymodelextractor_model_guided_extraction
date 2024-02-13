@@ -4,8 +4,9 @@ from pythautomata.utilities.sequence_generator import SequenceGenerator
 import random
 
 class GuidingWDFASequenceGenerator(SequenceGenerator):    
-    def __init__(self, wfa, max_seq_length: int, random_seed: int = 21):
+    def __init__(self, wfa, max_seq_length: int, random_seed: int = 21, random_stop_proba = 0.2):
         self.wfa = wfa
+        self._random_stop_proba = random_stop_proba
         super().__init__(wfa.alphabet, max_seq_length, random_seed)
     
     def generate_words(self, number_of_words: int):
@@ -16,6 +17,8 @@ class GuidingWDFASequenceGenerator(SequenceGenerator):
         return result
 
     def _sort_valid_symbol(self, symbols, weights):
+        if random.random() < self._random_stop_proba:
+            return self.wfa.terminal_symbol
         selected_symbols = []
         for i,w in enumerate(weights):
             if w>0:

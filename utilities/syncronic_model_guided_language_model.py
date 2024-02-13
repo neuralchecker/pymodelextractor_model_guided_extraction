@@ -126,6 +126,7 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
     
     def normalize(self, probas):
         if np.sum(probas)> 0:
+            a = np.sum(np.array(probas)/np.sum(probas))
             return list(np.array(probas)/np.sum(probas))
         else:
             return probas

@@ -4,6 +4,7 @@ from pythautomata.abstract.probabilistic_model import ProbabilisticModel
 from pythautomata.base_types.symbol import SymbolStr, Symbol
 from pythautomata.base_types.sequence import Sequence
 from pythautomata.base_types.alphabet import Alphabet
+from collections import OrderedDict
 import torch
 
 class GPT2_probabilistic_model_wrapper(ProbabilisticModel):
@@ -115,6 +116,7 @@ class GPT2_probabilistic_model_wrapper(ProbabilisticModel):
                         next_probs = torch.softmax(logits, dim=-1)
                     symbol_prob *= next_probs[0][token_ids[i+1]]
             symbols_probabilities[symbol] = symbol_prob
+        symbols_probabilities = OrderedDict(symbols_probabilities)    
         return symbols_probabilities
             
         # Normalize the probabilities
