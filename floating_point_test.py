@@ -67,9 +67,10 @@ syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, guiding_wfa, mode
 from pymodelextractor.teachers.pac_probabilistic_teacher import PACProbabilisticTeacher
 from pymodelextractor.learners.observation_tree_learners.bounded_pdfa_quantization_n_ary_tree_learner import BoundedPDFAQuantizationNAryTreeLearner
 from pythautomata.utilities.probability_partitioner import TopKProbabilityPartitioner, QuantizationProbabilityPartitioner, RankingPartitioner
+from utilities.floating_point_partitioner import FloatingPointProbabilityPartitioner
 from pythautomata.model_comparators.wfa_partition_comparison_strategy import WFAPartitionComparator
 from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSequenceGenerator
-partitioner = QuantizationProbabilityPartitioner(10)
+partitioner = FloatingPointProbabilityPartitioner()
 comparator = WFAPartitionComparator(partitioner)
 epsilon = 0.1
 delta = epsilon

@@ -26,7 +26,12 @@ nine = SymbolStr("9")
 numbers = [zero, one, two, three, four, five, six, seven, eight, nine]
 symbols = numbers.copy()
 symbols.append(dot)
+symbols.sort()
 alphabet = Alphabet(frozenset(symbols))
+
+def _get_symbol_index(symbol: SymbolStr):
+    return symbols.index(symbol)
+
 # This automaton represents the following regex: "The (man|woman) studied (medicine|science|engineering|maths|art|music)"
 def get_floating_point_wfa(terminal_symbol):
     stateA = WeightedState("initial", 1,0, terminal_symbol)
