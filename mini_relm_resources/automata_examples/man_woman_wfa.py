@@ -10,7 +10,7 @@ from pythautomata.automata.wheighted_automaton_definition.probabilistic_determin
     ProbabilisticDeterministicFiniteAutomaton
 
 
-alphabet = Alphabet(frozenset((SymbolStr("The"), SymbolStr("man"), SymbolStr("woman"), SymbolStr("studied"), 
+alphabet = Alphabet(frozenset((SymbolStr("The"), SymbolStr("man"), SymbolStr("woman"), SymbolStr("was trained in"), 
                                SymbolStr("medicine"), SymbolStr("science"), SymbolStr("engineering"), 
                                SymbolStr("maths"), SymbolStr("art"), SymbolStr("music"), SymbolStr("astrophysics"),
                                SymbolStr("astrology"))))
@@ -24,7 +24,7 @@ def get_man_woman_wfa(terminal_symbol):
     stateB.add_transition(SymbolStr("man"), stateC , 1)
     stateB.add_transition(SymbolStr("woman"), stateC, 1)
     stateD = WeightedState("D", 0,0, terminal_symbol)
-    stateC.add_transition(SymbolStr("studied"), stateD, 1)
+    stateC.add_transition(SymbolStr("was trained in"), stateD, 1)
     stateE = WeightedState("E", 0,1, terminal_symbol)
     stateD.add_transition(SymbolStr("medicine"), stateE, 1)
     stateD.add_transition(SymbolStr("science"), stateE, 1)

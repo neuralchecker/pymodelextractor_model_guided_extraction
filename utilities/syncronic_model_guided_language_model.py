@@ -107,9 +107,10 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
     
     def get_last_token_weights(self, sequence, required_suffixes):
         assert len(required_suffixes)==len(self.alphabet)+1, 'required_suffixes should only be the alphabet'
+        #print(required_suffixes)
         guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
-        required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
-        model_results = self._model.get_last_token_weights(sequence, required_suffixes)
+        projected_required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
+        model_results = self._model.get_last_token_weights(sequence, projected_required_suffixes)
         model_results_full = []
         j=0
         for i in range(len(guiding_results)):
