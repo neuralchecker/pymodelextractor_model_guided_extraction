@@ -48,16 +48,16 @@ class GPT2_probabilistic_model_wrapper(ProbabilisticModel):
         #alphabet_symbols_weights = {Sequence() + k: alphabet_symbols_weights[k] for k in alphabet_symbols_weights.keys()}
         alphabet_symbols_weights = self.last_token_probability(sequence, required_suffixes)
         for suffix in required_suffixes:
-            if suffix in alphabet_symbols_weights:
-                weights.append(alphabet_symbols_weights[suffix])
-            else:
-                assert False
-                new_sequence = sequence + suffix
-                new_prefix = Sequence(new_sequence[:-1])
-                new_suffix = new_sequence[-1]
-                next_symbol_weights = self.last_token_probability(new_prefix)
-                weights.append(next_symbol_weights[new_suffix])
-        return weights  
+            assert suffix in alphabet_symbols_weights
+            #    weights.append(alphabet_symbols_weights[suffix])
+            #else:
+            #    assert False
+            #    new_sequence = sequence + suffix
+            #    new_prefix = Sequence(new_sequence[:-1])
+            #    new_suffix = new_sequence[-1]
+            #    next_symbol_weights = self.last_token_probability(new_prefix)
+            #    weights.append(next_symbol_weights[new_suffix])
+        return list(alphabet_symbols_weights.values())
     
     def get_last_token_weights_batch(self, sequences, required_suffixes):
         results = []
