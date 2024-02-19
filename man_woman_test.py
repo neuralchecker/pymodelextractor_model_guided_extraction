@@ -8,7 +8,7 @@ torch.manual_seed(42)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model_id = "gpt2"
 
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, add_prefix_space=True, local_files_only = True)
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, add_prefix_space=True)
 model = AutoModelForCausalLM.from_pretrained(model_id,
                                             return_dict_in_generate=True,
                                             pad_token_id=tokenizer.eos_token_id).to(device)
@@ -34,7 +34,7 @@ from mini_relm_resources.automata_examples.man_woman_wfa import get_man_woman_wf
 guiding_wfa = get_man_woman_wfa(wrapper.terminal_symbol)
 
 # %%
-from utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
+from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 generator = GuidingWDFASequenceGenerator(guiding_wfa, None)
 
 # %%
@@ -53,7 +53,7 @@ display(graph)
 from utilities.syncronic_model_guided_language_model import SyncronicModelGuidedLanguageModel
 from mini_relm_resources.automata_examples.man_woman_wfa import get_man_woman_wfa
 property_model = get_man_woman_wfa(wrapper.terminal_symbol)
-syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10, normalize_outputs=False)
+syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10, normalize_outputs=True, top_k=2)
 
 # %%
 from pymodelextractor.teachers.pac_probabilistic_teacher import PACProbabilisticTeacher

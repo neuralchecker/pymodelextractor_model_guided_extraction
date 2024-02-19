@@ -9,7 +9,7 @@ from pythautomata.utilities.probability_partitioner import ProbabilityPartitione
 
 class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
 
-    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, normalize_outputs = False):
+    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, normalize_outputs = False, top_k = None):
         super().__init__()
         if model_name is None:
             self._model_name = model.name+"_"+guiding_model.name
@@ -21,16 +21,11 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         self._guiding_model = guiding_model
         self._normalize_outputs = normalize_outputs
         self.query_cache = dict()
-        #TODO: Change to model1.alphabet in guiding_model.alphabet
         assert model.alphabet == guiding_model.alphabet
-        #assert model1._padding_symbol == guiding_model._padding_symbol
         assert model.terminal_symbol == guiding_model.terminal_symbol
-
         self._alphabet = model.alphabet
-        #self._padding_symbol = model1._padding_symbol
         self._terminal_symbol = model.terminal_symbol
-        #self._compose_by_difference = compose_by_difference
-        #self._partitioner = probability_partitioner
+        self._top_k = top_k
 
     @property
     def model_name(self) -> str:
@@ -70,44 +65,16 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         for sequence in sequences:
             final_results.append(self.get_last_token_weights(sequence, required_suffixes))
         return final_results
-
-    # def get_last_token_weights_batch(self, sequences, required_suffixes):
-    #     sequences = sorted(list(sequences))            
-    #     guiding_results = self._guiding_model.get_last_token_weights_batch(sequences, required_suffixes)
-    #     seqs_for_model = list()
-    #     for i,res in enumerate(guiding_results):
-    #         #if np.sum(res) != 0:
-    #         seqs_for_model.append(sequences[i])
-    #     model_results = self._model.get_last_token_weights_batch(seqs_for_model, required_suffixes)  
-    #     final_results = []
-    #     model_results_i = 0
-    #     for res in guiding_results:
-    #         #if np.sum(res) != 0:
-    #         final_results.append(self._compose_probas(res, model_results[model_results_i]))
-    #         model_results_i+=1
-    #         #else:
-    #         #    final_results.append(res)
-    #     return final_results
+    
 
     def _compose_probas(self, probability_vector1, probability_vector2):
         assert len(probability_vector1) ==len(probability_vector2) 
         result = np.array(probability_vector1)*np.array(probability_vector2)  
         assert len(result) ==len(probability_vector1)      
-        return result
-        # exception_vector = np.ones(len(probability_vector1))*-2
-        # if self._compose_by_difference:
-        #     if not self._partitioner.are_in_same_partition(probability_vector1, probability_vector2):
-        #         return probability_vector1
-        #     return exception_vector
-        # else:
-        #     if self._partitioner.are_in_same_partition(probability_vector1, probability_vector2):
-        #         return probability_vector1
-        #     return exception_vector
-        
+        return result        
     
     def get_last_token_weights(self, sequence, required_suffixes):
         assert len(required_suffixes)==len(self.alphabet)+1, 'required_suffixes should only be the alphabet'
-        #print(required_suffixes)
         guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
         projected_required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
         model_results = self._model.get_last_token_weights(sequence, projected_required_suffixes)
@@ -120,8 +87,12 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
             else:
                 model_results_full.append(guiding_results[i])
         final_probas = self._compose_probas(model_results_full, guiding_results)
+        if self._top_k is not None:
+            final_probas = self._mask_elements_below_topk(final_probas, self._top_k)
+        
         if self._normalize_outputs:
             final_probas = self.normalize(final_probas)
+        
         return final_probas
     
     def normalize(self, probas):
@@ -134,4 +105,14 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
     def last_token_probabilities_batch(self, sequences: list[Sequence], required_suffixes: list[Sequence]) -> \
             list[list[float]]:
         return self.get_last_token_weights_batch(sequences, required_suffixes)
+    
+        
+    def _mask_elements_below_topk(self, arr, topk):
+        sorted_indices = np.argsort(arr, axis=None)
+        mask = np.zeros_like(arr, dtype=bool)
+        
+        topk_indices = np.unravel_index(sorted_indices[-topk:], arr.shape)
+        mask[topk_indices] = True
+        
+        return np.where(mask, arr, 0)
         
