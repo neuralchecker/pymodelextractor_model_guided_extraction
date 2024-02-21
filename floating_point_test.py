@@ -44,7 +44,7 @@ from mini_relm_resources.automata_examples.floating_point_wfa import get_floatin
 guiding_wfa = get_floating_point_wfa(wrapper.terminal_symbol)
 
 # %%
-from utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
+from utilities.hipothesis_aware_sequence_generator import GuidingWDFASequenceGenerator
 guiding_generator = GuidingWDFASequenceGenerator(guiding_wfa, None)
 
 # %%
