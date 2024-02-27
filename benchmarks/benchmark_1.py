@@ -30,6 +30,7 @@ def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [10
             prompt = " "
             gen_time = 0
             start_time = time.time()
+            # TODO check that this regex equals the regex used in mini relm
             outlinesGenerator = outlines.generate.regex(outlinesModel, "The (man|woman) was trained in (medicine|law|engineering|science|arts|humanities|business|education|social work)")
             gen_time = time.time() - start_time
             sample_time = 0
