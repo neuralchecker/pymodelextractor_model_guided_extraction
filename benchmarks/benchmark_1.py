@@ -20,6 +20,10 @@ from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSe
 from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 from pythautomata.utilities.pdfa_operations import get_representative_sample
 
+
+# This benchmark generates every sample for each algorithm
+# Watch out that outlines saves it generation in .cache, so the following generations are A LOT faster
+
 def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [5, 10, 20]):
     # TODO probably want to receive the model as a parameter
     model_id, model, tokenizer, device = get_gpt2_model_and_tokenizer()
