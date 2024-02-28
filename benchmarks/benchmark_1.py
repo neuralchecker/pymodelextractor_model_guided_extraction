@@ -1,5 +1,7 @@
 import torch
 import time
+import pandas as pd
+import os
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 import outlines
@@ -18,14 +20,17 @@ from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSe
 from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 from pythautomata.utilities.pdfa_operations import get_representative_sample
 
-def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [10, 100]):
+def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [5, 10, 20]):
     # TODO probably want to receive the model as a parameter
     model_id, model, tokenizer, device = get_gpt2_model_and_tokenizer()
     
     # Build the custom outlinesModel using the transformer model and tokenizer
     outlinesModel = Transformer(model, TransformerTokenizer(model_id))
 
+    results = []
+
     for sample in samples:
+        for _ in range(number_of_executions):
             # Outlines
             prompt = " "
             gen_time = 0
@@ -38,8 +43,10 @@ def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [10
             for i in range(sample):
                 _ = outlinesGenerator(prompt)
             sample_time = time.time() - start_time
-            # TODO save the results
-            print(f"Samples: {sample}. Outlines generation time: {gen_time}. Outlines sample time: {sample_time}")
+
+            res = ("Outlines", sample, gen_time, sample_time)
+            results.append(res)
+            print(res)
             
             # ASMR?
             wrapper = GPT2_probabilistic_model_wrapper(50, alphabet, device, model, tokenizer)
@@ -65,8 +72,17 @@ def benchmark_algorithms(number_of_executions: int = 1, samples: list[int] = [10
             start_time = time.time()
             get_representative_sample(pdfa, 1000)
             sample_time = time.time() - start_time
-            # TODO save results
-            print(f"Samples: {sample}. ASMR generation time: {gen_time}. ASMR sample time: {sample_time}")
+            
+            res = ("ASMR", sample, gen_time, sample_time)
+            results.append(res)
+            print(res)
+
+    dfresults = pd.DataFrame(results, columns=["Algorithm", "Samples", "Generation Time", "Sample Time"])
+    try:
+         os.mkdir("./benchmarks/results")
+    except OSError as error:
+         print(error)
+    dfresults.to_csv(f"./benchmarks/results/benchmark_1_{time.time()}.csv", index=False)
 
 def get_gpt2_model_and_tokenizer():
     torch.manual_seed(42)
