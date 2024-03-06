@@ -59,7 +59,7 @@ def benchmark_algorithms(sample_size: int, number_of_executions: int = 1):
         # ASMR?
         wrapper = GPT2_probabilistic_model_wrapper(50, alphabet, device, model, tokenizer)
         property_model = get_man_woman_wfa(wrapper.terminal_symbol)
-        syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10,normalize_outputs=True, top_k=50)
+        syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10,normalize_outputs=True, top_k=2)
         partitioner = QuantizationProbabilityPartitioner(100000)
         guiding_generator = GuidingWDFASequenceGenerator(property_model, None)
         comparator = WFAPartitionComparator(partitioner)
