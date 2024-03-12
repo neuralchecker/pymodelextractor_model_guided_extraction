@@ -82,9 +82,12 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         return result        
     
     def check_sequence_is_defined(self, sequence):
-        for i in range(len(sequence)-1):
-            v_prob =  self._raw_last_token_weights(Sequence(sequence.value[:i]))
-            is_valid_transition = v_prob[self._get_symbol_index(sequence.value[i])]
+        symbols = list(self.alphabet.symbols)
+        symbols.sort()
+        symbols = [self.terminal_symbol] + symbols
+        for i in range(len(sequence)):
+            v_prob =  self._raw_last_token_weights(Sequence(sequence.value[:i]),required_suffixes=symbols)
+            is_valid_transition = v_prob[symbols.index(sequence.value[i])]
             if not is_valid_transition:
                 return False
         return True

@@ -1,0 +1,17 @@
+,Algorithm,Instance,Number of States,Extracted Number of States,RunNumber,Time(s),LastTokenQuery,EquivalenceQuery,Tree Depth,Inner Nodes,Accuracy_in_target,Accuracy_anywhere,IsEquivalentExact,IsEquivalentOmitZero
+0,QuantNaryTreeLearner_Omit_Zero_Transitions,PDFA - 023f7608530947caac797597280e1f1d,12,13,1,0.21623870000000167,279,2,1,1,1.0,0.518,False,False
+1,QuantNaryTreeLearner_Omit_Zero_Transitions,PDFA - 693e2500186d41d48c7e0764337acf70,12,12,1,0.09991670000000141,147,2,1,1,1.0,0.652,False,False
+2,QuantNaryTreeLearner_Omit_Zero_Transitions,PDFA - ceff18c40cd04d689666419f7ba0b864,21,15,1,0.2141181000000003,192,4,2,3,0.995,0.141,False,False
+3,QuantNaryTreeLearner_Omit_Zero_Transitions,PDFA - 6577ba9e12cd4815a4be1bed34db4bc4,19,14,1,0.11963869999999588,159,2,1,1,0.993,0.329,False,False
+4,QuantNaryTreeLearner_Teacher_Filter,PDFA - 023f7608530947caac797597280e1f1d,12,13,1,11.4703746,2565,2,1,1,1.0,0.518,False,True
+5,QuantNaryTreeLearner_Teacher_Filter,PDFA - 693e2500186d41d48c7e0764337acf70,12,12,1,12.366659999999996,2559,2,1,1,1.0,0.652,False,True
+6,QuantNaryTreeLearner_Teacher_Filter,PDFA - ceff18c40cd04d689666419f7ba0b864,21,16,1,7.983905399999998,5127,5,2,3,1.0,0.145,False,True
+7,QuantNaryTreeLearner_Teacher_Filter,PDFA - 6577ba9e12cd4815a4be1bed34db4bc4,19,20,1,11.804550000000006,3549,5,2,3,1.0,0.422,False,True
+8,QuantNaryTreeLearner_Standard_Teacher,PDFA - 023f7608530947caac797597280e1f1d,12,12,1,3.5024329000000023,2559,2,1,1,1.0,1.0,True,True
+9,QuantNaryTreeLearner_Standard_Teacher,PDFA - 693e2500186d41d48c7e0764337acf70,12,12,1,4.057705800000008,2559,2,1,1,1.0,1.0,True,True
+10,QuantNaryTreeLearner_Standard_Teacher,PDFA - ceff18c40cd04d689666419f7ba0b864,21,21,1,3.5112198000000205,2685,6,2,3,1.0,1.0,True,True
+11,QuantNaryTreeLearner_Standard_Teacher,PDFA - 6577ba9e12cd4815a4be1bed34db4bc4,19,19,1,4.22721469999999,3480,5,2,3,1.0,1.0,True,True
+12,QuantNaryTreeLearner_Standard_Teacher_exact_teacher,PDFA - 023f7608530947caac797597280e1f1d,12,12,1,0.05237069999998312,84,2,1,1,1.0,1.0,True,True
+13,QuantNaryTreeLearner_Standard_Teacher_exact_teacher,PDFA - 693e2500186d41d48c7e0764337acf70,12,12,1,0.05838560000000825,84,2,1,1,1.0,1.0,True,True
+14,QuantNaryTreeLearner_Standard_Teacher_exact_teacher,PDFA - ceff18c40cd04d689666419f7ba0b864,21,21,1,0.23408800000001406,186,6,2,2,1.0,1.0,True,True
+15,QuantNaryTreeLearner_Standard_Teacher_exact_teacher,PDFA - 6577ba9e12cd4815a4be1bed34db4bc4,19,19,1,0.1874847999999929,141,5,2,2,1.0,1.0,True,True
