@@ -28,7 +28,7 @@ from pythautomata.abstract.probabilistic_model import ProbabilisticModel
 #-Network was trained with a framework trainer (for example RNNLanguageModelRecurrentNeuralNetworkTrainer)
 class RNNLanguageModel(ProbabilisticModel, ABC):
     def __init__(self, directory, alphabet: Alphabet = None, enconder: SymbolEncoder = None,
-                 model=None, training_seq_length=None, padding_symbol: SymbolStr = None, terminal_symbol: SymbolStr = None, use_one_hot_on_input = False, name = None):
+                 model=None, training_seq_length=None, padding_symbol: SymbolStr = None, terminal_symbol: SymbolStr = None, use_one_hot_on_input = False, name = None, verbose = 1):
         self._directory = directory
         self._alphabet = alphabet
         self._encoder = enconder
@@ -37,7 +37,8 @@ class RNNLanguageModel(ProbabilisticModel, ABC):
         self._padding_symbol = padding_symbol
         self._terminal_symbol = terminal_symbol   
         self._use_one_hot_on_input = use_one_hot_on_input   
-        self._name = name                
+        self._name = name       
+        self._verbose = verbose         
         
         if alphabet is None or enconder is None or model is None or training_seq_length is None or padding_symbol is None or terminal_symbol is None:
             try:
@@ -106,7 +107,7 @@ class RNNLanguageModel(ProbabilisticModel, ABC):
         else:
             encoded_sequence = np.reshape(encoded_sequence, (1, len(encoded_sequence)))
 
-        model_evaluation = self._model.predict(encoded_sequence)
+        model_evaluation = self._model.predict(encoded_sequence, verbose = self._verbose)
         return model_evaluation
 
     #TODO test
@@ -133,11 +134,11 @@ class RNNLanguageModel(ProbabilisticModel, ABC):
             
             encoded_sequences_np = np.asarray(encoded_sequences)
 
-            if length == 1:
-                encoded_sequences_np = encoded_sequences_np.reshape((-1, 1, len(encoded_sequences_np[0]))) 
+            #if length == 1:
+            #    encoded_sequences_np = encoded_sequences_np.reshape((-1, 1, len(encoded_sequences_np[0]))) 
             if length == 0:                
                 seqs = [Sequence() for i in seqs]
-
+            print(encoded_sequences_np.shape)
             model_evaluation = self._model.predict(encoded_sequences_np)
             seqs_to_query.extend(seqs)
             query_results.extend(model_evaluation)

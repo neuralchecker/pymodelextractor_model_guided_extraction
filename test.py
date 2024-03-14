@@ -16,6 +16,8 @@ from experiments.tata_box_model_guided_extraction import tata_box_model_guided_e
 from experiments.hdfs import hdfs_extraction_experiment
 from experiments.hdfs_by_time import hdfs_by_time_extraction_experiment
 from experiments.good_bad_queries_syncronic_excecution import good_bad_queries_syncronic_excecution_experiment
+from experiments.compare_on_random_pdfa import experiment_1_compare_on_random_pdfa
+from experiments.compare_on_random_pdfa_varying_zero_probs import experiment_2_compare_on_random_pdfa
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
@@ -26,9 +28,11 @@ import sys
 if __name__ == '__main__':
     #args = sys.argv   
     #run_type = int(args[1])  
-    run_type =1
+    run_type = 2
     if run_type == 1:
-        tata_box_model_guided_extraction.run_test()
+        experiment_1_compare_on_random_pdfa.run()
+    elif run_type == 2:
+        experiment_2_compare_on_random_pdfa.run()
     # elif run_type == 2:
     #     hdfs_extraction_experiment.run_test()
     # elif run_type == 3:

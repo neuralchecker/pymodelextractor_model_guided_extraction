@@ -58,7 +58,7 @@ def partial_accuracy(target_model, partial_model, partitioner, test_sequences):
 
 
 
-def compute_stats(target_model, extracted_model, partitioner, test_sequences = None, sample_size = 1000, max_seq_length = 20, seed = 42):
+def compute_partial_accuracy(target_model, extracted_model, partitioner, test_sequences = None, sample_size = 1000, max_seq_length = 20, seed = 42):
     if test_sequences is None:
         sg = UniformLengthSequenceGenerator(target_model.alphabet, max_seq_length, seed)
         test_sequences = sg.generate_words(sample_size)  
