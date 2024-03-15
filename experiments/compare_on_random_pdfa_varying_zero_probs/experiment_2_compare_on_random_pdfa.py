@@ -89,13 +89,13 @@ def experiment_random_PDFAS():
     pdfa_teacher_standard = partial(PDFATeacher, comparison_strategy = partition_comparator)
     pdfa_teacher_omit_zero = partial(PDFATeacher, comparison_strategy = partition_comparator_omit_zero)
     algorithms = [
-        #('QuantNaryTreeLearner_Omit_Zero_Transitions', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), hypothesis_aware_teacher),
-        #('QuantNaryTreeLearner_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_sample_teacher),
-        #('QuantNaryTreeLearner_Standard_Teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), standard_sample_teacher),
+        ('QuantNaryTreeLearner_Omit_Zero_Transitions', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), hypothesis_aware_teacher),
+        ('QuantNaryTreeLearner_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_sample_teacher),
+        ('QuantNaryTreeLearner_Standard_Teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), standard_sample_teacher),
         #SE CAE ESTE -> ('QuantNaryTreeLearner_Omit_Zero_Transitions_AND_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), sample_teacher),
-        #('QuantNaryTreeLearner_Omit_Zero_Transitions_exact_teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), pdfa_teacher_omit_zero),
+        ('QuantNaryTreeLearner_Omit_Zero_Transitions_exact_teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), pdfa_teacher_omit_zero),
         ('QuantNaryTreeLearner_Teacher_Filter_exact', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_exact_teacher),
-        #('QuantNaryTreeLearner_Standard_Teacher_exact_teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), pdfa_teacher_standard)
+        ('QuantNaryTreeLearner_Standard_Teacher_exact_teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), pdfa_teacher_standard)
                      ]
         
     results = []   
