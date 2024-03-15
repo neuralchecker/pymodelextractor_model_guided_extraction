@@ -28,7 +28,7 @@ import sys
 if __name__ == '__main__':
     #args = sys.argv   
     #run_type = int(args[1])  
-    run_type = 2
+    run_type = 1
     if run_type == 1:
         experiment_1_compare_on_random_pdfa.run()
     elif run_type == 2:
