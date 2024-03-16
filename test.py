@@ -18,6 +18,7 @@ from experiments.hdfs_by_time import hdfs_by_time_extraction_experiment
 from experiments.good_bad_queries_syncronic_excecution import good_bad_queries_syncronic_excecution_experiment
 from experiments.compare_on_random_pdfa import experiment_1_compare_on_random_pdfa
 from experiments.compare_on_random_pdfa_varying_zero_probs import experiment_2_compare_on_random_pdfa
+from experiments.compare_on_random_pdfa_to_check_minimality import experiment_3_compare_on_random_pdfa_to_check_minimality
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
@@ -26,15 +27,15 @@ import sys
 
 
 if __name__ == '__main__':
-    args = sys.argv   
-    run_type = int(args[1])  
-    #run_type = 1
+    #args = sys.argv   
+    #run_type = int(args[1])  
+    run_type = 3
     if run_type == 1:
         experiment_1_compare_on_random_pdfa.run()
     elif run_type == 2:
         experiment_2_compare_on_random_pdfa.run()
-    # elif run_type == 2:
-    #     hdfs_extraction_experiment.run_test()
+    elif run_type == 3:
+        experiment_3_compare_on_random_pdfa_to_check_minimality.run_test()
     # elif run_type == 3:
     #     hdfs_by_time_extraction_experiment.run_test()
     # elif run_type == 4:
