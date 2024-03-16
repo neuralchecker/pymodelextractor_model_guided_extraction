@@ -52,7 +52,7 @@ def generate_and_persist_random_PDFAs():
                 pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=0.3)   
                 pdfa.name = "random_PDFA_nominal_size_"+str(size)+"_"+str(counter)             
                 pdfas.append(pdfa)
-                joblib.dump(pdfa, filename = path+dfa.name)
+                joblib.dump(pdfa, filename = pdfa+dfa.name)
                 counter += 1    
                 pbar.update(1) 
         pbar.close() 
