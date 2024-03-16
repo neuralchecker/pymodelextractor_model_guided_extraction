@@ -35,7 +35,7 @@ if __name__ == '__main__':
     elif run_type == 2:
         experiment_2_compare_on_random_pdfa.run()
     elif run_type == 3:
-        experiment_3_compare_on_random_pdfa_to_check_minimality.run_test()
+        experiment_3_compare_on_random_pdfa_to_check_minimality.run()
     # elif run_type == 3:
     #     hdfs_by_time_extraction_experiment.run_test()
     # elif run_type == 4:
