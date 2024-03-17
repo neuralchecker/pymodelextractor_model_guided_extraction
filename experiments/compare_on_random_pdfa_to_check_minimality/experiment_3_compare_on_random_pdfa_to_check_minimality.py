@@ -40,8 +40,8 @@ def generate_and_persist_random_PDFAs():
     except:
         print('Failed loading instances!')
         print('Generating instances...')
-        sizes = [50]
-        n= 100
+        sizes = [100]
+        n= 1000
         counter = 0
         pdfas = []
         pbar = tqdm(total=n*len(sizes))
@@ -98,7 +98,7 @@ def experiment_random_PDFAS():
                      ]
         
     results = []   
-    number_of_executions  = 11
+    number_of_executions  = 1
     
     print('Excecuting extraction...')
     pbar = tqdm(total=number_of_executions*len(algorithms)*len(pdfas))
@@ -114,7 +114,7 @@ def experiment_random_PDFAS():
                 learner = algorithm(check_probabilistic_hipothesis = False)
                 secs, result = utils.time_fun(learner.learn,pdfa_teacher)               
                 pbar.update(1)                     
-                if i > 0:
+                if i >= 0:
                     if result.info['observation_tree'] is None:
                         tree_depth = 0
                         inner_nodes = 0
