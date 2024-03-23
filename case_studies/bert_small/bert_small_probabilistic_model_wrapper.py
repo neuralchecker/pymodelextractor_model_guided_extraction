@@ -6,11 +6,10 @@ import torch
 
 class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
-    def __init__(self, max_seq_length: int, alphabet:Alphabet, device: str, model, tokenizer):
-        self.model = model
+    def __init__(self, alphabet: Alphabet, device: str, model, tokenizer):
+        self.model = model 
         self.device = device
         self.tokenizer = tokenizer
-        self.device = device
         self._alphabet = alphabet
 
     @property
@@ -83,6 +82,8 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
             #get the probability of the word
             word_probs = probs[0, -1, word_tokens.input_ids[-1]]
+            
+            
 
             total_word_probs = sum(word_probs)
             total_word_probs /= len(word_probs)
@@ -96,3 +97,5 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
 
         return word_probabilities
+
+    
