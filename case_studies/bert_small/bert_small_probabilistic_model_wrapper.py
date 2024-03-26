@@ -3,14 +3,16 @@ from pythautomata.base_types.symbol import SymbolStr, Symbol
 from pythautomata.base_types.sequence import Sequence
 from pythautomata.base_types.alphabet import Alphabet
 import torch
+import numpy as np
 
 class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
-    def __init__(self, alphabet: Alphabet, device: str, model, tokenizer):
+    def __init__(self, alphabet: Alphabet, device: str, model, tokenizer, guide_model):
         self.model = model 
         self.device = device
         self.tokenizer = tokenizer
         self._alphabet = alphabet
+        self.guide_model = guide_model
 
     @property
     def name(self) -> str:
@@ -29,30 +31,20 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
     
     def log_sequence_probability(self, sequence: Sequence) -> float:
         raise NotImplementedError
-    
 
     def last_token_probability(self, sequence: Sequence) -> float:
-        symbols = set(self._alphabet.symbols)
-        symbols.add(self.terminal_symbol)
-        return self._get_probability(sequence, symbols)
-    
+        alphabet_symbols = list(self.alphabet.symbols)
+        weights = self.guide_model.get_last_token_weights(sequence, alphabet_symbols)
+        symbols = [str(alphabet_symbols[i]).split(" ")[0] for i in range(len(weights)) if weights[i] > 0]
 
-    #TODO: Fix interface, this should be removed from the learners and pymodelextractor as a whole
-    def get_last_token_weights(self, sequence, required_suffixes):
-        weights = list()
-        #alphabet_symbols_weights = self.next_symbol_probas(sequence)
-        #alphabet_symbols_weights = {Sequence() + k: alphabet_symbols_weights[k] for k in alphabet_symbols_weights.keys()}
-        alphabet_symbols_weights = self.last_token_probability(sequence)
-        for suffix in required_suffixes:
-            if suffix in alphabet_symbols_weights:
-                weights.append(alphabet_symbols_weights[suffix])
-            else:
-                new_sequence = sequence + suffix
-                new_prefix = Sequence(new_sequence[:-1])
-                new_suffix = new_sequence[-1]
-                next_symbol_weights = self.last_token_probability(new_prefix)
-                weights.append(next_symbol_weights[new_suffix])
-        return weights  
+        if not len(symbols):
+            symbols.add(self.terminal_symbol)
+        
+        prob = self._get_probability(str(sequence).replace(",", " "), symbols)
+        return prob
+    
+    def get_last_token_weights(self, sequence, symbols):
+        return self._get_probability([str(sequence)], symbols)
     
     def get_last_token_weights_batch(self, sequences, required_suffixes):
         results = []
@@ -65,12 +57,13 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
     def _get_probability(self, sequence: str, symbols: list, normalize: bool = True):
         tokens = self.tokenize(sequence)
+
         with torch.no_grad():
             output = self.model(tokens.input_ids)
             logits = output.logits
             probs = torch.softmax(logits, dim=-1)
 
-        word_probabilities = {}
+        word_probabilities = []
         for word in symbols:
             word_tokens = self.tokenize(str(word))
             
@@ -83,18 +76,15 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
             #get the probability of the word
             word_probs = probs[0, -1, word_tokens.input_ids[-1]]
             
-            
-
             total_word_probs = sum(word_probs)
             total_word_probs /= len(word_probs)
-            word_probabilities[word] = total_word_probs.item()
+            word_probabilities.append(total_word_probs.item())
 
 
         if normalize:
-            total = sum(word_probabilities.values())
-            for word in word_probabilities:
-                word_probabilities[word] /= total
-
+            words = np.array(word_probabilities)
+            words /= np.sum(words)
+            word_probabilities = words.tolist()
 
         return word_probabilities
 
