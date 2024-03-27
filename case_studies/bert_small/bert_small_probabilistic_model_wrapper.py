@@ -44,7 +44,7 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
         return prob
     
     def get_last_token_weights(self, sequence, symbols):
-        return self._get_probability([str(sequence)], symbols)
+        return [weight for weight in self._get_probability([str(sequence)], symbols, False)]
     
     def get_last_token_weights_batch(self, sequences, required_suffixes):
         results = []
