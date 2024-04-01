@@ -6,14 +6,16 @@ from case_studies.gpt2.gpt2_probabilistic_model_wrapper import GPT2_probabilisti
 from mini_relm_resources.automata_examples.floating_point_wfa import alphabet
 from utilities.floating_point_partitioner import FloatingPointProbabilityPartitioner
 from utilities.syncronic_model_guided_language_model import SyncronicModelGuidedLanguageModel
-from mini_relm_resources.automata_examples.floating_point_wfa import get_floating_point_wfa
+from mini_relm_resources.automata_examples.floating_point_wfa_01 import get_floating_point_wfa_01
 from pymodelextractor.teachers.pac_probabilistic_teacher import PACProbabilisticTeacher
 from pymodelextractor.learners.observation_tree_learners.bounded_pdfa_quantization_n_ary_tree_learner import BoundedPDFAQuantizationNAryTreeLearner
 from pythautomata.model_comparators.wfa_partition_comparison_strategy import WFAPartitionComparator
 from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
+from pythautomata.utilities.guiding_pdfa_sequence_generator import GuidingPDFASequenceGenerator
 from pythautomata.utilities.pdfa_operations import get_representative_sample
-from utilities.floating_point_partitioner import FloatingPointProbabilityPartitioner
 from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSequenceGenerator
+from sampling.get_representative_sample_length import get_representative_sample_length
+from pythautomata.utilities.probability_partitioner import QuantizationProbabilityPartitionerPlus
 
 
 
@@ -21,20 +23,19 @@ from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSe
 def sample_floating_point():
     model_id, model, tokenizer, device = get_gpt2_model_and_tokenizer()
     wrapper = GPT2_probabilistic_model_wrapper(50, alphabet, device, model, tokenizer)
-    property_model = get_floating_point_wfa(wrapper.terminal_symbol)
-    syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=10, normalize_outputs=True)
+    property_model = get_floating_point_wfa_01(wrapper.terminal_symbol)
+    syncrhronic_model = SyncronicModelGuidedLanguageModel(wrapper, property_model, model_name="GUIDED_GPT2", max_seq_length=2, normalize_outputs=True)
     guiding_generator = GuidingWDFASequenceGenerator(property_model, None)
-    print(guiding_generator.generate_words(100))
-    guiding_generator = UniformWordSequenceGenerator(alphabet, 6)
-    print(guiding_generator.generate_words(100))
+    #guiding_generator = UniformWordSequenceGenerator(alphabet, 6)
     partitioner = FloatingPointProbabilityPartitioner()
+    #partitioner = QuantizationProbabilityPartitionerPlus(7)
     comparator = WFAPartitionComparator(partitioner)
     epsilon = 0.05
     delta = epsilon
     sequence_generator = guiding_generator
     max_states = 30
-    max_query_length = 100
-    teacher  = PACProbabilisticTeacher(syncrhronic_model, epsilon = epsilon, delta = delta, max_seq_length = None, comparator = comparator, sequence_generator=guiding_generator, compute_epsilon_star=False)
+    max_query_length = 2
+    teacher  = PACProbabilisticTeacher(syncrhronic_model, epsilon = epsilon, delta = delta, max_seq_length = 2, comparator = comparator, sequence_generator=guiding_generator, compute_epsilon_star=False)
     learner = BoundedPDFAQuantizationNAryTreeLearner(partitioner, max_states, max_query_length, None, generate_partial_hipothesis = True, pre_cache_queries_for_building_hipothesis = True,  check_probabilistic_hipothesis = False)
 
 
@@ -44,7 +45,7 @@ def sample_floating_point():
     floating_points = []
   
     for i in range(10000):
-        number = get_representative_sample(pdfa, 1)
+        number = get_representative_sample_length(pdfa, 1, 2)
         number_string = str(number)
         
         result = number_string.replace('[', '').replace(']', '').replace(',', '')

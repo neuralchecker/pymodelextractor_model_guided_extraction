@@ -5,18 +5,17 @@ from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
 import outlines
 import outlines.caching as cache
-from outlines.models.transformers import Transformer, TransformerTokenizer
+from outlines.models.transformers import Transformers
 
 def sample_floating_point():
     model_id, model, tokenizer, device = get_gpt2_model_and_tokenizer()
-    outlinesModel = Transformer(model, TransformerTokenizer(model_id))
+    outlinesModel = Transformers(model, tokenizer)
     prompt = " "
-    ## regex from the paper
-    outlinesGenerator = outlines.generate.regex(outlinesModel, "([0-9]*)?\.?[0-9]*")
+    outlinesGenerator = outlines.generate.regex(outlinesModel, "\.[0-9]{7}")
 
     floating_points = []
     for i in range(10000):
-        _ = outlinesGenerator(prompt,max_tokens= 10)
+        _ = outlinesGenerator(prompt)
         floating_points.append(_)
         print(f"i: {i}, Floating Point: {floating_points[-1]}")
 
