@@ -18,6 +18,8 @@ from pythautomata.model_comparators.wfa_partition_comparison_strategy import WFA
 from pythautomata.utilities.uniform_length_sequence_generator import UniformLengthSequenceGenerator
 from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 
+from pythautomata.utilities.pdfa_operations import check_is_minimal
+
 from utilities.synchronized_pdfa_teacher import SynchronizedPDFATeacher
 
 import numpy as np
@@ -127,12 +129,12 @@ def experiment_random_PDFAS():
                     accuracy_in_target = utils.partial_accuracy(target_model=pdfa, partial_model=extracted_model, partitioner = learner.probability_partitioner, test_sequences=sequences_in_target)['Accuracy']
                     partition_comparator = WFAPartitionComparator(learner.probability_partitioner)
                     partition_comparator_omit_zero = WFAPartitionComparator(learner.probability_partitioner, omit_zero_transitions=True)
-                    
+                    is_minimal = check_is_minimal(extracted_model)
                     is_equivalent_exact = partition_comparator.are_equivalent(pdfa, extracted_model)
                     is_equivalent_omit_zero = partition_comparator_omit_zero.are_equivalent(pdfa, extracted_model)
-                    results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero))
+                    results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero, is_minimal))
     pbar.close() 
-    dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero']) 
+    dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero','IsMinimal']) 
     dfresults.to_csv('./experiments/compare_on_random_pdfa_varying_zero_probs/results/results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
 
 def run():
