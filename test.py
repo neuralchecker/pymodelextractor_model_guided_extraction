@@ -27,14 +27,16 @@ import sys
 
 
 if __name__ == '__main__':
-    #args = sys.argv   
-    #run_type = int(args[1])  
-    run_type = 3
+    args = sys.argv   
+    run_type = int(args[1]) 
     if run_type == 1:
+        print("Running experiment 1:")
         experiment_1_compare_on_random_pdfa.run()
     elif run_type == 2:
+        print("Running experiment 2:")
         experiment_2_compare_on_random_pdfa.run()
     elif run_type == 3:
+        print("Running experiment 3:")
         experiment_3_compare_on_random_pdfa_to_check_minimality.run()
     # elif run_type == 3:
     #     hdfs_by_time_extraction_experiment.run_test()
