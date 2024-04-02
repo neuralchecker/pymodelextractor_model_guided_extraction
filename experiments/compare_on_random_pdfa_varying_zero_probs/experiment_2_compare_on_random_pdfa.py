@@ -34,6 +34,8 @@ from functools import partial
 #Experiment to compare WLStar and QuaNT
 def generate_and_persist_random_PDFAs():
     path = './experiments/compare_on_random_pdfa_varying_zero_probs/instances/'
+    if not os.path.exists(path):
+        os.makedirs(path)
     try:
         pdfas = utils.load_pdfas(path)
         if len(pdfas) == 0:
@@ -135,7 +137,10 @@ def experiment_random_PDFAS():
                     results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero, is_minimal))
     pbar.close() 
     dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero','IsMinimal']) 
-    dfresults.to_csv('./experiments/compare_on_random_pdfa_varying_zero_probs/results/results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
+    path = './experiments/compare_on_random_pdfa_varying_zero_probs/results/'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    dfresults.to_csv(path+'results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
 
 def run():
     experiment_random_PDFAS()
