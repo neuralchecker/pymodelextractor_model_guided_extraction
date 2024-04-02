@@ -40,7 +40,7 @@ def generate_and_persist_random_PDFAs():
     except:
         print('Failed loading instances!')
         print('Generating instances...')
-        sizes = [100]
+        sizes = [100, 200]
         n= 1000
         counter = 0
         pdfas = []

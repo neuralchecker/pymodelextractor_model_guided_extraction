@@ -51,7 +51,7 @@ def generate_and_persist_random_PDFAs():
         for prob in zero_probabilities:
             counter = 0
             for i in range(n):
-                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = 50, seed = counter)                
+                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = 100, seed = counter)                
                 pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=prob)   
                 pdfa.name = "random_PDFA_nominal_size_"+str(prob).replace(".", "_")+"_"+str(counter)             
                 pdfas.append(pdfa)
