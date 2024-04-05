@@ -43,16 +43,17 @@ def generate_and_persist_random_PDFAs():
     except:
         print('Failed loading instances!')
         print('Generating instances...')
-        sizes = [100, 200, 300]
+        sizes = [250, 500, 750, 1000]
         n= 10
         counter = 0
         pdfas = []
-        pbar = tqdm(total=n*len(sizes))
+        pbar = tqdm(total=n*len(sizes))        
+        alphabet = constants.get_n_ary_alphabet(10)
         for size in sizes:
             counter = 0
             for i in range(n):
-                dfa = nicaud_dfa_generator.generate_dfa(alphabet = constants.binaryAlphabet, nominal_size = size, seed = counter)                
-                pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=0.3)   
+                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = size, seed = counter)                
+                pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=0.9)   
                 pdfa.name = "random_PDFA_nominal_size_"+str(size)+"_"+str(counter)             
                 pdfas.append(pdfa)
                 joblib.dump(pdfa, filename = path+pdfa.name)
