@@ -7,12 +7,11 @@ import numpy as np
 
 class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
 
-    def __init__(self, alphabet: Alphabet, device: str, model, tokenizer, guide_model):
+    def __init__(self, max_length, alphabet: Alphabet, device: str, model, tokenizer):
         self.model = model 
         self.device = device
         self.tokenizer = tokenizer
         self._alphabet = alphabet
-        self.guide_model = guide_model
 
     @property
     def name(self) -> str:
