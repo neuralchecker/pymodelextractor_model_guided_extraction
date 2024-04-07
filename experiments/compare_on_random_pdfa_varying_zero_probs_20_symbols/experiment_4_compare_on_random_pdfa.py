@@ -44,7 +44,8 @@ def generate_and_persist_random_PDFAs():
     except:
         print('Failed loading instances!')
         print('Generating instances...')
-        zero_probabilities = [x / 20.0 for x in range(0, 20, 1)]
+        zero_probabilities = [x / 20.0 for x in range(0, 20, 1)]+[0.96, 0.97,0.98,0.99]
+        
         n= 10
         counter = 0
         pdfas = []
