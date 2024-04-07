@@ -21,6 +21,7 @@ from experiments.compare_on_random_pdfa_varying_zero_probs import experiment_2_c
 from experiments.compare_on_random_pdfa_to_check_minimality import experiment_3_compare_on_random_pdfa_to_check_minimality
 from experiments.compare_on_random_pdfa_varying_zero_probs_20_symbols import experiment_4_compare_on_random_pdfa
 from experiments.compare_on_random_pdfa_smaller_instances import experiment_5_compare_on_random_pdfa
+from experiments.compare_on_random_pdfa_varying_zero_probs_20_symbols_500_states import experiment_6_compare_on_random_pdfa
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
@@ -46,6 +47,9 @@ if __name__ == '__main__':
     elif run_type == 5:
         print("Running experiment 5:")
         experiment_5_compare_on_random_pdfa.run()
+    elif run_type == 6:
+        print("Running experiment 6:")
+        experiment_6_compare_on_random_pdfa.run()
     # elif run_type == 3:
     #     hdfs_by_time_extraction_experiment.run_test()
     # elif run_type == 4:
