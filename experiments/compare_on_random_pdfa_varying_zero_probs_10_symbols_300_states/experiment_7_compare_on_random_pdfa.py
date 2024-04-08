@@ -33,7 +33,7 @@ from functools import partial
 
 #Experiment to compare WLStar and QuaNT
 def generate_and_persist_random_PDFAs():
-    path = './experiments/compare_on_random_pdfa_varying_zero_probs_20_symbols_500_states/instances/'
+    path = './experiments/compare_on_random_pdfa_varying_zero_probs_10_symbols_300_states/instances/'
     if not os.path.exists(path):
         os.makedirs(path)
     try:
@@ -49,11 +49,11 @@ def generate_and_persist_random_PDFAs():
         counter = 0
         pdfas = []
         pbar = tqdm(total=n*len(zero_probabilities))
-        alphabet = constants.get_n_ary_alphabet(20)
+        alphabet = constants.get_n_ary_alphabet(10)
         for prob in zero_probabilities:
             counter = 0
             for i in range(n):
-                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = 500, seed = counter)                
+                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = 300, seed = counter)                
                 pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=prob)   
                 pdfa.name = "random_PDFA_nominal_size_"+str(prob).replace(".", "_")+"_"+str(counter)             
                 pdfas.append(pdfa)
@@ -137,7 +137,7 @@ def experiment_random_PDFAS():
                     results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero, is_minimal))
     pbar.close() 
     dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero','IsMinimal']) 
-    path = './experiments/compare_on_random_pdfa_varying_zero_probs_20_symbols_500_states/results/'
+    path = './experiments/compare_on_random_pdfa_varying_zero_probs_10_symbols_300_states/results/'
     if not os.path.exists(path):
         os.makedirs(path)
     dfresults.to_csv(path+'results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
