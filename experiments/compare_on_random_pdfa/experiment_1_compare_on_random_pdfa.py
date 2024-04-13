@@ -18,6 +18,7 @@ from pythautomata.model_comparators.wfa_partition_comparison_strategy import WFA
 from pythautomata.utilities.uniform_length_sequence_generator import UniformLengthSequenceGenerator
 from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 
+from pythautomata.utilities.pdfa_operations import check_is_minimal
 from utilities.synchronized_pdfa_teacher import SynchronizedPDFATeacher
 
 import numpy as np
@@ -32,6 +33,8 @@ from functools import partial
 #Experiment to compare WLStar and QuaNT
 def generate_and_persist_random_PDFAs():
     path = './experiments/compare_on_random_pdfa/instances/'
+    if not os.path.exists(path):
+        os.makedirs(path)
     try:
         pdfas = utils.load_pdfas(path)
         if len(pdfas) == 0:
@@ -40,16 +43,17 @@ def generate_and_persist_random_PDFAs():
     except:
         print('Failed loading instances!')
         print('Generating instances...')
-        sizes = [100, 200, 300]
+        sizes = [250, 500, 750, 1000]
         n= 10
         counter = 0
         pdfas = []
-        pbar = tqdm(total=n*len(sizes))
+        pbar = tqdm(total=n*len(sizes))        
+        alphabet = constants.get_n_ary_alphabet(10)
         for size in sizes:
             counter = 0
             for i in range(n):
-                dfa = nicaud_dfa_generator.generate_dfa(alphabet = constants.binaryAlphabet, nominal_size = size, seed = counter)                
-                pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=0.3)   
+                dfa = nicaud_dfa_generator.generate_dfa(alphabet = alphabet, nominal_size = size, seed = counter)                
+                pdfa = pdfa_generator.pdfa_from_dfa(dfa, zero_probability=0.9)   
                 pdfa.name = "random_PDFA_nominal_size_"+str(size)+"_"+str(counter)             
                 pdfas.append(pdfa)
                 joblib.dump(pdfa, filename = path+pdfa.name)
@@ -88,9 +92,9 @@ def experiment_random_PDFAS():
     pdfa_teacher_standard = partial(PDFATeacher, comparison_strategy = partition_comparator)
     pdfa_teacher_omit_zero = partial(PDFATeacher, comparison_strategy = partition_comparator_omit_zero)
     algorithms = [
-        ('QuantNaryTreeLearner_Omit_Zero_Transitions', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), hypothesis_aware_teacher),
-        ('QuantNaryTreeLearner_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_sample_teacher),
-        ('QuantNaryTreeLearner_Standard_Teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), standard_sample_teacher),
+        #('QuantNaryTreeLearner_Omit_Zero_Transitions', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), hypothesis_aware_teacher),
+        #('QuantNaryTreeLearner_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_sample_teacher),
+        #('QuantNaryTreeLearner_Standard_Teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), standard_sample_teacher),
         #SE CAE ESTE -> ('QuantNaryTreeLearner_Omit_Zero_Transitions_AND_Teacher_Filter', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), sample_teacher),
         ('QuantNaryTreeLearner_Omit_Zero_Transitions_exact_teacher', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = True, probabilityPartitioner = partitioner), pdfa_teacher_omit_zero),
         ('QuantNaryTreeLearner_Teacher_Filter_exact', partial(PDFAQuantizationNAryTreeLearner, omit_zero_transitions = False, probabilityPartitioner = partitioner), filter_exact_teacher),
@@ -126,13 +130,16 @@ def experiment_random_PDFAS():
                     accuracy_in_target = utils.partial_accuracy(target_model=pdfa, partial_model=extracted_model, partitioner = learner.probability_partitioner, test_sequences=sequences_in_target)['Accuracy']
                     partition_comparator = WFAPartitionComparator(learner.probability_partitioner)
                     partition_comparator_omit_zero = WFAPartitionComparator(learner.probability_partitioner, omit_zero_transitions=True)
-                    
+                    is_minimal = check_is_minimal(extracted_model)
                     is_equivalent_exact = partition_comparator.are_equivalent(pdfa, extracted_model)
                     is_equivalent_omit_zero = partition_comparator_omit_zero.are_equivalent(pdfa, extracted_model)
-                    results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero))
+                    results.append((algorithm_name, pdfa.name, len(pdfa.weighted_states), len(extracted_model.weighted_states), i, secs, result.info['last_token_weight_queries_count'], result.info['equivalence_queries_count'], tree_depth, inner_nodes, accuracy_in_target, accuracy_anywhere, is_equivalent_exact, is_equivalent_omit_zero, is_minimal))
     pbar.close() 
-    dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero']) 
-    dfresults.to_csv('./experiments/compare_on_random_pdfa/results/results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
-
+    dfresults = pd.DataFrame(results, columns = ['Algorithm', 'Instance', 'Number of States', 'Extracted Number of States','RunNumber','Time(s)','LastTokenQuery', 'EquivalenceQuery', 'Tree Depth', 'Inner Nodes','Accuracy_in_target','Accuracy_anywhere', 'IsEquivalentExact', 'IsEquivalentOmitZero','IsMinimal']) 
+    path = './experiments/compare_on_random_pdfa/results/'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    dfresults.to_csv(path+'results_'+datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")+'.csv') 
+    
 def run():
     experiment_random_PDFAS()

@@ -14,7 +14,7 @@ torch.manual_seed(42)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model_id = "gpt2"
 
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, add_prefix_space=True, local_files_only = True)
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, add_prefix_space=False, local_files_only = True)
 model = AutoModelForCausalLM.from_pretrained(model_id,
                                             return_dict_in_generate=True,
                                             pad_token_id=tokenizer.eos_token_id).to(device)
@@ -44,7 +44,7 @@ from mini_relm_resources.automata_examples.floating_point_wfa import get_floatin
 guiding_wfa = get_floating_point_wfa(wrapper.terminal_symbol)
 
 # %%
-from utilities.hipothesis_aware_sequence_generator import GuidingWDFASequenceGenerator
+from pythautomata.utilities.guiding_wfa_sequence_generator import GuidingWDFASequenceGenerator
 guiding_generator = GuidingWDFASequenceGenerator(guiding_wfa, None)
 
 # %%
@@ -70,6 +70,9 @@ from pythautomata.utilities.probability_partitioner import TopKProbabilityPartit
 from utilities.floating_point_partitioner import FloatingPointProbabilityPartitioner
 from pythautomata.model_comparators.wfa_partition_comparison_strategy import WFAPartitionComparator
 from pythautomata.utilities.uniform_word_sequence_generator import UniformWordSequenceGenerator
+from pythautomata.base_types.sequence import Sequence
+from pythautomata.base_types.symbol import SymbolStr
+
 partitioner = FloatingPointProbabilityPartitioner()
 comparator = WFAPartitionComparator(partitioner)
 epsilon = 0.1
@@ -81,6 +84,9 @@ max_query_length = 100
 
 # %%
 teacher  = PACProbabilisticTeacher(syncrhronic_model, epsilon = epsilon, delta = delta, max_seq_length = None, comparator = comparator, sequence_generator=guiding_generator, compute_epsilon_star=False)
+teacher.next_token_probabilities(Sequence([SymbolStr("."), SymbolStr("0")]))
+
+
 learner = BoundedPDFAQuantizationNAryTreeLearner(partitioner, max_states, max_query_length, None, generate_partial_hipothesis = True, pre_cache_queries_for_building_hipothesis = True,  check_probabilistic_hipothesis = False)
 
 # %%
