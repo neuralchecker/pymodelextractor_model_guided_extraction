@@ -70,17 +70,16 @@ class BERT_SMALL_probabilistic_model_wrapper(ProbabilisticModel):
             #remove the first and last token
             word_tokens.input_ids = word_tokens.input_ids[:, 1:-1]
 
-            word_probs = probs[0, -1, word_tokens.input_ids[-1]][0]
+            word_probs = probs[0, -1, word_tokens.input_ids[0]][0]
             amount_of_tokens_for_last_symbols = len(word_tokens.input_ids[0])
+            
             if (amount_of_tokens_for_last_symbols > 1):
-                symbol_word_probs = 1
-                actual_sequence = token_ids
+                input_token_ids_for_token = token_ids.clone().detach()
+                input_token_ids_for_token = torch.cat([input_token_ids_for_token, word_tokens.input_ids], -1)
                 with torch.no_grad():
-                    for token in word_tokens.input_ids[0]:
-                        new_probs = torch.softmax(self.model(actual_sequence).logits, dim=-1)
-                        symbol_word_probs *= new_probs[0, -1, token]
-                    actual_sequence = torch.cat((actual_sequence, token.reshape((1,1))), dim=-1)
-                word_probs = symbol_word_probs
+                    new_probs = torch.softmax(self.model(input_token_ids_for_token).logits, dim=-1)
+                for i, token in enumerate(word_tokens.input_ids[0][:-1]):
+                    word_probs *= new_probs[0, i+1, token]
             word_probabilities.append(word_probs)
         
         return word_probabilities
