@@ -105,12 +105,12 @@ class GPT2_probabilistic_model_wrapper(ProbabilisticModel):
             token_ids = self.tokenizer.convert_tokens_to_ids(tokens)
             symbol_prob = probs[token_ids[0]]
             if len(token_ids) > 1: 
-                input_ids_for_token = input_ids.copy()  
+                input_ids_for_token = input_ids.clone().detach()
                 # Extract probabilities for the specified word from the distribution of the next token
                 for i,id in enumerate(token_ids[:-1]):
-                    input_ids_for_token = torch.cat([input_ids_for_token, torch.tensor([id])]).unsqueeze(0)
+                    input_ids_for_token = torch.cat([input_ids_for_token, torch.tensor([id])])
                     with torch.no_grad():
-                        output = self.model(input_ids_for_token)
+                        output = self.model(input_ids_for_token.unsqueeze(0))
                         logits = output.logits[:, -1, :]
                         next_probs = torch.softmax(logits, dim=-1)[0]
                     symbol_prob *= next_probs[token_ids[i+1]]
