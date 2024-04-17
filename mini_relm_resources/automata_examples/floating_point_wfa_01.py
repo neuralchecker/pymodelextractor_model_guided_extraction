@@ -32,30 +32,19 @@ alphabet = Alphabet(frozenset(symbols))
 def _get_symbol_index(symbol: SymbolStr):
     return symbols.index(symbol)
 
-def get_floating_point_wfa(terminal_symbol):
+def get_floating_point_wfa_01(terminal_symbol):
     stateInitial = WeightedState("initial", 1,0, terminal_symbol)
-    stateZero = WeightedState("zero", 0, 1, terminal_symbol)
     stateNumbers = WeightedState("numbers", 0,1, terminal_symbol)    
     stateDot = WeightedState("dot", 0,0, terminal_symbol)
-    stateMoreNumbers = WeightedState("more_numbers", 0,1, terminal_symbol)    
     hole = WeightedState("hole", 0, 0, terminal_symbol)
 
+   
+    stateInitial.add_transition(dot, stateDot, 1) 
     for number in numbers:
-        if number != zero:
-            stateInitial.add_transition(number, stateNumbers, 1)
-        else:
-            stateInitial.add_transition(number, stateZero, 1)
-    stateInitial.add_transition(dot, stateDot, 1)
-    stateZero.add_transition(dot, stateMoreNumbers, 1)
-    for number in numbers:
-        stateNumbers.add_transition(number, stateNumbers, 1)        
-    stateNumbers.add_transition(dot, stateMoreNumbers, 1)    
-    for number in numbers:
-        stateDot.add_transition(number, stateMoreNumbers, 1)
-    for number in numbers:
-        stateMoreNumbers.add_transition(number, stateMoreNumbers, 1)   
+        stateDot.add_transition(number, stateNumbers, 1)
+        stateNumbers.add_transition(number, stateNumbers, 1)
     
-    states = frozenset({stateInitial, stateNumbers, stateDot, stateMoreNumbers, stateZero, hole})
+    states = frozenset({stateInitial, stateNumbers, stateDot, hole})
 
     for state in states:
         for symbol in alphabet.symbols:
