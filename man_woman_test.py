@@ -2,6 +2,7 @@
 import torch
 from transformers import AutoModelForCausalLM
 from transformers import AutoTokenizer
+from utilities.hypothesis_aware_sample_probabilistic_teacher import HypothesisAwareSampleProbabilisticTeacher
 
 torch.manual_seed(42)
 
@@ -71,7 +72,8 @@ max_query_length = 100
 
 
 # %%
-teacher  = PACProbabilisticTeacher(syncrhronic_model, epsilon = epsilon, delta = delta, max_seq_length = None, comparator = comparator, sequence_generator=sequence_generator, compute_epsilon_star=False)
+#teacher  = PACProbabilisticTeacher(syncrhronic_model, epsilon = epsilon, delta = delta, max_seq_length = None, comparator = comparator, sequence_generator=sequence_generator, compute_epsilon_star=False)
+teacher = HypothesisAwareSampleProbabilisticTeacher(syncrhronic_model, comparator, 30)
 learner = BoundedPDFAQuantizationNAryTreeLearner(partitioner, max_states, max_query_length, None, generate_partial_hipothesis = True, pre_cache_queries_for_building_hipothesis = True,  check_probabilistic_hipothesis = False)
 
 # %%

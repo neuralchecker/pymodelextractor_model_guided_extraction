@@ -9,23 +9,31 @@ from pythautomata.utilities.probability_partitioner import ProbabilityPartitione
 
 class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
 
-    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, normalize_outputs = False, top_k = None):
+    def __init__(self, model:ProbabilisticModel, guiding_model:ProbabilisticModel, max_seq_length: int = None,  model_name: str = None, normalize_outputs = False, top_k = None, check_is_defined = False, undefined_ouput = None ):
         super().__init__()
         if model_name is None:
             self._model_name = model.name+"_"+guiding_model.name
         else:
             self._model_name = model_name
         if max_seq_length is None:
-            self._max_seq_length = min(model._max_seq_length, guiding_model._max_seq_length)
+            if guiding_model is not None:
+                self._max_seq_length = min(model._max_seq_length, guiding_model._max_seq_length)
+            else: 
+                self._max_seq_length = model._max_seq_length
         self._model = model
         self._guiding_model = guiding_model
         self._normalize_outputs = normalize_outputs
         self.query_cache = dict()
-        assert model.alphabet == guiding_model.alphabet
-        assert model.terminal_symbol == guiding_model.terminal_symbol
+        if guiding_model is not None:
+            assert model.alphabet == guiding_model.alphabet
+            assert model.terminal_symbol == guiding_model.terminal_symbol
         self._alphabet = model.alphabet
         self._terminal_symbol = model.terminal_symbol
         self._top_k = top_k
+        self.check_is_defined = check_is_defined
+        self.undefined_output = undefined_ouput
+        if self.check_is_defined:
+            assert undefined_ouput is not None, "There should be an undefined output specified if checking if the sequence is defined"
 
     @property
     def model_name(self) -> str:
@@ -73,10 +81,24 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
         assert len(result) ==len(probability_vector1)      
         return result        
     
-    def get_last_token_weights(self, sequence, required_suffixes):
-        assert len(required_suffixes)==len(self.alphabet)+1, 'required_suffixes should only be the alphabet'
-        guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
-        projected_required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
+    def check_sequence_is_defined(self, sequence):
+        symbols = list(self.alphabet.symbols)
+        symbols.sort()
+        symbols = [self.terminal_symbol] + symbols
+        for i in range(len(sequence)):
+            v_prob =  self._raw_last_token_weights(Sequence(sequence.value[:i]),required_suffixes=symbols)
+            is_valid_transition = v_prob[symbols.index(sequence.value[i])]
+            if not is_valid_transition:
+                return False
+        return True
+
+    def _raw_last_token_weights(self, sequence, required_suffixes):
+        if self._guiding_model is not None:
+            guiding_results = self._guiding_model.get_last_token_weights(sequence, required_suffixes)
+            projected_required_suffixes = [required_suffixes[i] for i in range(len(required_suffixes)) if guiding_results[i]]
+        else:
+            guiding_results =  [1] * len(required_suffixes)
+            projected_required_suffixes = required_suffixes    
         model_results = self._model.get_last_token_weights(sequence, projected_required_suffixes)
         model_results_full = []
         j=0
@@ -85,7 +107,7 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
                 model_results_full.append(model_results[j])
                 j+=1
             else:
-                model_results_full.append(guiding_results[i])
+                model_results_full.append(0)
         final_probas = self._compose_probas(model_results_full, guiding_results)
         if self._top_k is not None:
             final_probas = self._mask_elements_below_topk(final_probas, self._top_k)
@@ -94,6 +116,15 @@ class SyncronicModelGuidedLanguageModel(ProbabilisticModel):
             final_probas = self.normalize(final_probas)
         
         return final_probas
+
+    def get_last_token_weights(self, sequence, required_suffixes):
+        assert len(required_suffixes)==len(self.alphabet)+1, 'required_suffixes should only be the alphabet'
+        if self.check_is_defined:
+            if not self.check_sequence_is_defined(sequence):
+                return self.undefined_output
+        
+        return self._raw_last_token_weights(sequence, required_suffixes)
+        
     
     def normalize(self, probas):
         if np.sum(probas)> 0:
