@@ -66,7 +66,7 @@ def sample_floating_point():
     for i in range(10000):
         #number = get_representative_sample_length(pdfa, sample_size = 1, length=1, retry=False)
         #number = get_representative_sample_token(pdfa, sample_size = 1, max_tokens = 2, retry=True)
-        number = get_representative_sample(pdfa, 1)
+        number = get_representative_sample(pdfa, sample_size = 1)
         number_string = str(number)
         
         result = number_string.replace('[', '').replace(']', '').replace(',', '')
