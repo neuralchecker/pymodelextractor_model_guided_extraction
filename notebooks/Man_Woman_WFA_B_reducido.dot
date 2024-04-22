@@ -1,0 +1,32 @@
+digraph weighted_automaton {
+	margin=0 rankdir=LR size=15
+	node [shape=circle]
+	A [label="A
+0" shape=diamond]
+	A -> B [label="The-1"]
+	B [label="B
+0"]
+	B -> C [label="man-1
+woman-1"]
+	C [label="C
+0"]
+	C -> D [label="was trained in-1"]
+	D [label="D
+0"]
+	D -> E [label="art-1
+science-1
+business-1
+medicine-1
+computer science-1
+engineering-1
+humanities-1
+social sciences-1
+information systems-1
+math-1"]
+	E [label="E
+1"]
+	E -> hole [label="Σ*"]
+	hole [label="hole
+0"]
+	hole -> hole [label="Σ*"]
+}
